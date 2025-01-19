@@ -1,0 +1,73 @@
+/* 전체 화면 설정 */
+.game-start {
+    display: flex;
+    flex-direction: column; /* 여전히 세로 정렬 */
+    align-items: center; /* 가로 중앙 정렬 */
+    justify-content: center; /* 세로 중앙 정렬 */
+    height: 100vh; /* 화면 전체 높이 */
+    width: 100vw;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+/* 제목 스타일 */
+.game-start h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* 제시어와 입력란 섹션 */
+.item-display {
+    display: flex; /* 가로 정렬 */
+    flex-direction: row; /* 가로 방향으로 정렬 */
+    justify-content: space-between; /* 각 요소 사이에 여유 공간 추가 */
+    align-items: center; /* 세로 방향 정렬 */
+    width: 80%; /* 가로 크기 */
+    max-width: 600px; /* 최대 가로 크기 */
+    background-color: #f9f9f9; /* 배경색 */
+    border-radius: 10px; /* 둥근 모서리 */
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    text-align: left; /* 텍스트 왼쪽 정렬 */
+    gap: 20px; /* 요소 간 간격 추가 */
+}
+
+/* 제시어 스타일 */
+.item-display h2 {
+    font-size: 20px;
+    color: #007acc; /* 텍스트 강조 색상 */
+    margin: 0; /* 여백 제거 */
+    flex-shrink: 0; /* 크기 축소 방지 */
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+}
+
+/* 텍스트 입력란 스타일 */
+textarea {
+    flex: 1; /* 남은 공간 차지 */
+    height: 100px; /* 고정 높이 */
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc; /* 외곽선 색상 */
+    border-radius: 5px; /* 둥근 모서리 */
+    resize: none; /* 크기 조정 불가 */
+    box-sizing: border-box;
+}
+
+textarea:focus {
+    border-color: #007acc; /* 포커스 시 강조 색상 */
+    outline: none; /* 기본 포커스 제거 */
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .item-display {
+        flex-direction: column; /* 작은 화면에서는 세로 정렬 */
+        gap: 10px;
+    }
+
+    textarea {
+        width: 100%; /* 작은 화면에서는 너비 100% */
+    }
+}
