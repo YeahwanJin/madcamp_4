@@ -1,0 +1,80 @@
+/* GamePlay.css */
+
+/* 전체 배경과 레이아웃 설정 */
+.game-play {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    width: 100vw;
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+/* 헤더 스타일 */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+header .logo {
+    height: 60px;
+    object-fit: contain;
+}
+
+/* 제목과 제시어 설명 스타일 */
+main {
+    text-align: center;
+    max-width: 800px;
+    width: 100%;
+}
+
+main h1 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+main p {
+    font-size: 1.2rem;
+    color: #555;
+    margin: 10px 0;
+}
+
+/* 에러 메시지 스타일 */
+.error-message {
+    margin-top: 20px;
+    color: #ff4d4d;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* 생성된 이미지 표시 스타일 */
+.image-display {
+    margin-top: 20px;
+}
+
+.image-display img {
+    max-width: 100%;
+    height: auto;
+    border: 3px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 로고 스타일 */
+header .subtitle {
+    font-size: 1rem;
+    color: #666;
+    margin-left: 20px;
+}
