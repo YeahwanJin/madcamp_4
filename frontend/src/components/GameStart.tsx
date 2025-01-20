@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios'; // axios를 사용하여 API 호출
 import '../styles/GameStart.css';
 
 
 const GameStart: React.FC = () => {
+    const { roomId } = useParams(); // URL에서 roomId 가져오기
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     const navigate = useNavigate();
@@ -37,7 +38,7 @@ const GameStart: React.FC = () => {
     const handleSubmit = () => {
         // 설명과 제시어를 함께 GamePlay로 전달
         if (input && randomItem) {
-            navigate('/gameplay', { state: { description: input, keyword: randomItem } });
+            navigate('/game/${roomId}/gameplay?category=${category}', { state: { description: input, keyword: randomItem } });
         } else {
             alert('설명을 입력해주세요!');
         }
@@ -46,6 +47,7 @@ const GameStart: React.FC = () => {
     return (
         <div className="game-start">
             <h1>게임 시작: {category}</h1>
+            <h5>방 ID: {roomId}</h5> {/* 방 ID 표시 */}
             {error ? (
                 <div className="error-message">
                     <p>{error}</p>

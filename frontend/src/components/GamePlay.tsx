@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import logo from '../assets/logo.png'; // 로고 추가
 import axios from 'axios';
 import placeholderImage from '../assets/placeholder.png'; // 임의의 이미지 추가
 import '../styles/GamePlay.css';
 
 const GamePlay: React.FC = () => {
+    const { roomId } = useParams(); // URL에서 roomId 가져오기
     const location = useLocation();
     const state = location.state as { description: string; keyword: string };
     const { description, keyword } = state || {};
 
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
+    
     const isDevMode = true; // true로 설정하면 실제 API 호출을 막음
 
     useEffect(() => {
@@ -57,6 +59,7 @@ const GamePlay: React.FC = () => {
             <header>
                 <img src={logo} alt="로고" className="logo" />
                 <h2 className="subtitle">AI로 말해요</h2>
+                <h6>방 ID: {roomId}</h6> {/* 방 ID 표시 */}
             </header>
             <main>
                 <h1>게임 플레이</h1>

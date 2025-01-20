@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/Game.css';
 import logo from '../assets/logo.png'; // 로고 추가
 import crownIcon from '../assets/crown-icon.png'; // 방장 아이콘
@@ -20,11 +20,18 @@ const Game: React.FC = () => {
     const handleCategorySelect = (category: string) => {
         setSelectedCategory(category); // 카테고리 선택
     };
+    const { roomId } = useParams(); // URL에서 roomId 가져오기
 
     const handleStartGame = () => {
         if (selectedCategory) {
-            // 선택된 카테고리로 GameStart로 이동
-            navigate(`/game-start?category=${selectedCategory}`);
+            // 현재 방 ID를 URL에서 가져오거나 관리 중인 방 ID 사용
+            const roomId = window.location.pathname.split('/')[2]; // URL에서 roomId 추출
+            if (roomId) {
+                // 선택된 카테고리로 이동
+                navigate(`/game/${roomId}/game-start?category=${selectedCategory}`);
+            } else {
+                alert('유효한 방 ID를 찾을 수 없습니다.');
+            }
         } else {
             alert('카테고리를 선택해주세요!');
         }
@@ -37,6 +44,7 @@ const Game: React.FC = () => {
             <header className="game-header">
                 <img src={logo} alt="로고" className="logo" />
                 <h2 className="subtitle">AI로 말해요</h2>
+                <h3 className="h-game3">방 ID: {roomId}</h3> {/* 방 ID 표시 */}
             </header>
             <div className="content">
                 {/* 왼쪽: 유저 리스트 */}
