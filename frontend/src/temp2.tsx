@@ -7,8 +7,9 @@ import socket from '../socket';
 const GamePlay: React.FC = () => {
     const { roomId } = useParams<{ roomId: string }>();
     const location = useLocation();
-    const { category, script } = location.state || {}; // 초기 상태에서 category와 script 받기
+    const { script } = location.state || {}; // 초기 상태에서 script만 받기
     const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [category, setCategory] = useState<string | null>(null); // 카테고리 상태 추가
     const [error, setError] = useState<string | null>(null);
     const [messages, setMessages] = useState<string[]>([]);
     const [newMessage, setNewMessage] = useState<string>('');
@@ -17,10 +18,11 @@ const GamePlay: React.FC = () => {
         if (roomId) {
             console.log(`방 ${roomId}에 입장한 상태입니다.`);
 
-            // `gameStarted` 이벤트 등록: 모든 클라이언트가 그림 URL을 받음
-            socket.on('gameStarted', ({ imageUrl }) => {
+            // `gameStarted` 이벤트 등록: 그림 URL과 카테고리 모두 받음
+            socket.on('gameStarted', ({ imageUrl, category }) => {
                 setImageUrl(imageUrl); // 이미지 URL 상태 업데이트
-                console.log(`게임 시작: 그림 URL 수신 (${imageUrl})`);
+                setCategory(category); // 카테고리 상태 업데이트
+                console.log(`게임 시작: 그림 URL (${imageUrl}), 카테고리 (${category}) 수신`);
             });
 
             // 채팅 메시지 수신

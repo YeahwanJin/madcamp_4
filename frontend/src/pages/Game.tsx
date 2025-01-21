@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/Game.css';
 import logo from '../assets/logo.png'; // 로고 추가
@@ -12,35 +12,36 @@ import idolIcon from '../assets/idolIcon.png'; // 아이돌 아이콘
 import actorIcon from '../assets/actorIcon.png'; // 배우 아이콘
 import celebIcon from '../assets/celebIcon.png'; // 유명인 아이콘
 import playIcon from '../assets/play-icon.webp'; // 플레이 아이콘 추가
+import socket from '../socket';
 
 const Game: React.FC = () => {
     const navigate = useNavigate();
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null); // 선택된 카테고리
-    const [players] = useState([
-        { name: 'yehwan', isHost: true },
-        { name: 'guest1', isHost: false },
-        { name: 'guest2', isHost: false },
-    ]); // 플레이어 샘플 데이터
+    const [players, setPlayers] = useState<{ name: string; isHost: boolean }[]>([]);
 
     const handleCategorySelect = (category: string) => {
         setSelectedCategory(category); // 카테고리 선택
     };
     const { roomId } = useParams(); // URL에서 roomId 가져오기
 
+    useEffect(() => {
+            socket.on('participantsUpdated', (data) => {
+                setPlayers(data.participants);
+            });
+    
+            return () => {
+                socket.off('participantsUpdated');
+            };
+        }, []);
+
     const handleStartGame = () => {
-        if (selectedCategory) {
-            // 현재 방 ID를 URL에서 가져오거나 관리 중인 방 ID 사용
-            const roomId = window.location.pathname.split('/')[2]; // URL에서 roomId 추출
-            if (roomId) {
-                // 선택된 카테고리로 이동
-                navigate(`/game/${roomId}/game-start?category=${selectedCategory}`);
+            if (selectedCategory) {
+                socket.emit('startGame', { room: roomId, category: selectedCategory });
+                navigate(`/game/${roomId}/game-start`, { state: { selectedCategory } });
             } else {
-                alert('유효한 방 ID를 찾을 수 없습니다.');
+                alert('카테고리를 선택하세요!');
             }
-        } else {
-            alert('카테고리를 선택해주세요!');
-        }
-    };
+        };
 
 
 

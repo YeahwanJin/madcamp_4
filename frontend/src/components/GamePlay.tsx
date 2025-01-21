@@ -10,55 +10,64 @@ const GamePlay: React.FC = () => {
     const { roomId } = useParams(); // URL에서 roomId 가져오기
     const location = useLocation();
     const state = location.state as { description: string; keyword: string };
-    const { description, keyword } = state || {};
+    
 
-    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    // const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [category, setCategory] = useState<string | null>(null); // 카테고리 상태 추가
     const [error, setError] = useState<string | null>(null);
     const [messages, setMessages] = useState<string[]>([]); // 채팅 메시지 목록
     const [newMessage, setNewMessage] = useState<string>(''); // 입력 중인 메시지
-    const isDevMode = true; // true로 설정하면 실제 API 호출을 막음
+    const isDevMode = false; // true로 설정하면 실제 API 호출을 막음
+    const { script } = location.state || {}; // 초기 상태에서 category와 script 받기
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (description) {
-            if (isDevMode) {
-                // 개발 모드에서는 임의의 이미지 URL 사용
-                console.log('개발 모드: 실제 API 호출을 생략합니다.');
-                setTimeout(() => {
-                    setImageUrl(placeholderImage); // 로컬 이미지 경로 설정
-                }, 1000); // API 응답 시뮬레이션 (1초 지연)
-            } else {
-                // 실제 API 호출
-                const requestBody = {
-                    prompt: description, // 설명만 전송
-                    n: 1, // 이미지 1개 생성 요청
-                    size: "1024x1024" // 이미지 크기 지정
-                };
+    // useEffect(() => {
+    //     if (description) {
+    //         if (isDevMode) {
+    //             // 개발 모드에서는 임의의 이미지 URL 사용
+    //             console.log('개발 모드: 실제 API 호출을 생략합니다.');
+    //             setTimeout(() => {
+    //                 setImageUrl(placeholderImage); // 로컬 이미지 경 설정
+    //             }, 1000); // API 응답 시뮬레이션 (1초 지연)
+    //         } else {
+    //             // 실제 API 호출
+    //             const requestBody = {
+    //                 prompt: description, // 설명만 전송
+    //                 n: 1, // 이미지 1개 생성 요청
+    //                 size: "1024x1024" // 이미지 크기 지정
+    //             };
 
-                axios
-                    .post('http://192.249.29.181:3000/generate-image', requestBody)
-                    .then(response => {
-                        const { imageUrls } = response.data;
-                        if (imageUrls && imageUrls.length > 0) {
-                            setImageUrl(imageUrls[0]); // 생성된 이미지 URL 설정
-                        } else {
-                            setError('이미지를 가져오는 데 실패했습니다.');
-                        }
-                    })
-                    .catch((err) => {
-                        if (err.response && err.response.data && err.response.data.error) {
-                            setError(err.response.data.error); // 서버로부터 받은 에러 메시지
-                        } else {
-                            setError('이미지 생성에 실패했습니다. 다시 시도해주세요.');
-                        }
-                    });
-            }
-        }
-    }, [description, keyword, isDevMode]);
+    //             axios
+    //                 .post('http://192.249.29.181:3000/generate-image', requestBody)
+    //                 .then(response => {
+    //                     const { imageUrls } = response.data;
+    //                     if (imageUrls && imageUrls.length > 0) {
+    //                         setImageUrl(imageUrls[0]); // 생성된 이미지 URL 설정
+    //                     } else {
+    //                         setError('이미지를 가져오는 데 실패했습니다.');
+    //                     }
+    //                 })
+    //                 .catch((err) => {
+    //                     if (err.response && err.response.data && err.response.data.error) {
+    //                         setError(err.response.data.error); // 서버로부터 받은 에러 메시지
+    //                     } else {
+    //                         setError('이미지 생성에 실패했습니다. 다시 시도해주세요.');
+    //                     }
+    //                 });
+    //         }
+    //     }
+    // }, [description, keyword, isDevMode]);
     
     //채팅 상태관리
     useEffect(() => {
         if (roomId) {
             console.log(`방 ${roomId}에 입장한 상태입니다.`);
+
+            socket.on('gameStarted', ({ imageUrl, category }) => {
+                setImageUrl(imageUrl); // 이미지 URL 상태 업데이트
+                setCategory(category); // 카테고리 상태 업데이트
+                console.log(`게임 시작: 그림 URL (${imageUrl}), 카테고리 (${category}) 수신`);
+            });
     
             // 채팅 메시지 수신
             socket.on('chatMessage', (data) => {
@@ -99,8 +108,8 @@ const GamePlay: React.FC = () => {
                 <main className="main-container">
                     <div className="image-container">
                         <h1>게임 플레이</h1>
-                        <p>제시어: {keyword}</p>
-                        <p>설명: {description}</p>
+                        <p>카테고리: {category}</p>
+                        <p>{script}</p>
                         {error ? (
                             <div className="error-message">
                                 <p>{error}</p>

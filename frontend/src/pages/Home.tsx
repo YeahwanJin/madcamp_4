@@ -60,28 +60,54 @@ const Home: React.FC = () => {
 
     
 
+    // const handleJoinRoom = () => {
+    //     if (!nickname || !joinRoomId) {
+    //         alert('닉네임과 방 ID를 입력하세요!');
+    //         return;
+    //     }
+
+    //     // 서버에 방 참가 요청
+    //     socket.emit('joinRoom', { room: joinRoomId, nickname: nickname });
+
+    //     // 서버에서 방 참가 성공 시 처리
+    //     socket.on('roomJoined', ({ roomId }) => {
+    //         console.log(`방 참가 성공: ${roomId}`);
+
+    //         socket.on("roomMessage", (data) => {
+    //             console.log(`[Room Message]: ${data.message}`);
+    //         });
+        
+
+    //         // Game 페이지로 이동
+    //         navigate(`/game/${roomId}`, { state: { nickname, roomId } });
+    //     });
+
+    //     // 방 참가 실패 시 처리
+    //     socket.on('error', (errorMessage) => {
+    //         alert(errorMessage);
+    //     });
+    // };
+    
     const handleJoinRoom = () => {
         if (!nickname || !joinRoomId) {
             alert('닉네임과 방 ID를 입력하세요!');
             return;
         }
-
+    
         // 서버에 방 참가 요청
-        socket.emit('joinRoom', { room: joinRoomId, nickname: nickname });
-
+        socket.emit('joinRoom', { room: joinRoomId, nickname });
+    
         // 서버에서 방 참가 성공 시 처리
-        socket.on('roomJoined', ({ roomId }) => {
-            console.log(`방 참가 성공: ${roomId}`);
-
-            socket.on("roomMessage", (data) => {
-                console.log(`[Room Message]: ${data.message}`);
-            });
-        
-
-            // Game 페이지로 이동
-            navigate(`/game/${roomId}`, { state: { nickname, roomId } });
+        socket.on('roomJoined', ({ roomId, isHost }) => {
+            if (isHost) {
+                // 호스트일 경우 Game 페이지로 이동
+                navigate(`/game/${roomId}`, { state: { nickname, roomId } });
+            } else {
+                // 비호스트일 경우 GamePlay 페이지로 바로 이동
+                navigate(`/game/${roomId}/gameplay`, { state: { nickname, roomId } });
+            }
         });
-
+    
         // 방 참가 실패 시 처리
         socket.on('error', (errorMessage) => {
             alert(errorMessage);
