@@ -7,9 +7,7 @@ import defaultPhoto2 from '../assets/defaultPhoto2.jpg';
 import defaultPhoto3 from '../assets/defaultPhoto3.jpg';
 import wrenchIcon from '../assets/wrench.png'; // 몽키스패너 아이콘
 import playIcon from '../assets/play-icon.webp'; // 플레이 아이콘 추가
-import { io } from 'socket.io-client'; // Socket.IO 클라이언트 추가
-
-const socket = io('http://192.249.29.181:3000'); // 서버와 연결
+import socket from '../socket'; // 분리된 Socket.IO 클라이언트
 
 const Home: React.FC = () => {
     const navigate = useNavigate();
@@ -52,32 +50,15 @@ const Home: React.FC = () => {
         };
     }, [texts.length]);
 
-    const handleCreateRoom = () => {
-        if (!nickname) {
-            alert('닉네임을 입력하세요!');
-            return;
-        }
+    useEffect(() => {
+        // 정리 함수 설정
+        return () => {
+            socket.off('roomJoined'); // 방 참가 성공 이벤트 제거
+            socket.off('error'); // 에러 이벤트 제거
+        };
+    }, []); // 빈 배열 -> 마운트/언마운트 시에만 실행
 
-        // 랜덤 방 ID 생성
-        const generatedRoomId = Math.floor(100 + Math.random() * 900).toString();
-
-        // 서버에 방 생성 요청
-        socket.emit('createRoom', { roomId: generatedRoomId, nickname });
-
-        // 서버에서 방 생성 성공 시 처리
-        socket.on('roomCreated', ({ roomId }) => {
-            console.log(`방 생성 성공: ${roomId}`);
-            setRoomId(roomId);
-
-            // Game 페이지로 이동
-            navigate(`/game/${roomId}`, { state: { nickname, roomId } });
-        });
-
-        // 방 생성 실패 시 처리
-        socket.on('error', (errorMessage) => {
-            alert(errorMessage);
-        });
-    };
+    
 
     const handleJoinRoom = () => {
         if (!nickname || !joinRoomId) {
@@ -155,10 +136,7 @@ const Home: React.FC = () => {
                             onChange={(e) => setNickname(e.target.value)}
                         />
                     <div className="button-container">
-                            <button className="button" onClick={handleCreateRoom}>
-                                <img src={playIcon} alt="Play Icon" className="button-icon" />
-                                게임 추가
-                            </button>
+                            
                             <button className="button" onClick={() => setJoinRoomOpen(!isJoinRoomOpen)}>
                                 방 참가
                             </button>

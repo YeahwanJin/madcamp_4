@@ -5,7 +5,12 @@ import logo from '../assets/logo.png'; // 로고 추가
 import crownIcon from '../assets/crown-icon.png'; // 방장 아이콘
 import userIcon from '../assets/user-icon.png'; // 유저 아이콘
 import movieIcon from '../assets/movie-icon.png'; // 영화 아이콘
-import musicIcon from '../assets/music-icon.png'; // 노래 아이콘
+import placeIcon from '../assets/placeIcon.png'; // 지역 아이콘
+import proverbIcon from '../assets/proverbIcon.png'; // 속담 아이콘
+import feelIcon from '../assets/feelIcon.png'; // 감정 아이콘
+import idolIcon from '../assets/idolIcon.png'; // 아이돌 아이콘
+import actorIcon from '../assets/actorIcon.png'; // 배우 아이콘
+import celebIcon from '../assets/celebIcon.png'; // 유명인 아이콘
 import playIcon from '../assets/play-icon.webp'; // 플레이 아이콘 추가
 
 const Game: React.FC = () => {
@@ -41,6 +46,7 @@ const Game: React.FC = () => {
 
     return (
         <div className="game">
+            <div className="outer-container">
             <header className="game-header">
                 <img src={logo} alt="로고" className="logo" />
                 <h2 className="subtitle">AI로 말해요</h2>
@@ -76,11 +82,46 @@ const Game: React.FC = () => {
                             영화
                         </div>
                         <div
-                            className={`mode-item ${selectedCategory === '노래' ? 'selected' : ''}`}
+                            className={`mode-item ${selectedCategory === '지역' ? 'selected' : ''}`}
                             onClick={() => handleCategorySelect('노래')}
                         >
-                            <img src={musicIcon} alt="노래 아이콘" className="mode-icon" />
-                            노래
+                            <img src={placeIcon} alt="지역 아이콘" className="mode-icon" />
+                            지역
+                        </div>
+                        <div
+                            className={`mode-item ${selectedCategory === '속담' ? 'selected' : ''}`}
+                            onClick={() => handleCategorySelect('속담담')}
+                        >
+                            <img src={proverbIcon} alt="속담 아이콘" className="mode-icon" />
+                            속담
+                        </div>
+                        <div
+                            className={`mode-item ${selectedCategory === '감정' ? 'selected' : ''}`}
+                            onClick={() => handleCategorySelect('감정')}
+                        >
+                            <img src={feelIcon} alt="감정 아이콘" className="mode-icon" />
+                            감정
+                        </div>
+                        <div
+                            className={`mode-item ${selectedCategory === '아이돌' ? 'selected' : ''}`}
+                            onClick={() => handleCategorySelect('아이돌돌')}
+                        >
+                            <img src={idolIcon} alt="아이돌 아이콘" className="mode-icon" />
+                            아이돌
+                        </div>
+                        <div
+                            className={`mode-item ${selectedCategory === '배우' ? 'selected' : ''}`}
+                            onClick={() => handleCategorySelect('배우')}
+                        >
+                            <img src={actorIcon} alt="아이돌 아이콘" className="mode-icon" />
+                            배우
+                        </div>
+                        <div
+                            className={`mode-item ${selectedCategory === '유명인' ? 'selected' : ''}`}
+                            onClick={() => handleCategorySelect('유명인')}
+                        >
+                            <img src={celebIcon} alt="유명인 아이콘" className="mode-icon" />
+                            유명인
                         </div>
                     </div>
                     <button className="start-button" onClick={handleStartGame}>
@@ -89,6 +130,7 @@ const Game: React.FC = () => {
                     </button>
                 </div>
             </div>
+        </div>
         </div>
     );
 };
