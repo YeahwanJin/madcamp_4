@@ -104,13 +104,14 @@ const Home: React.FC = () => {
     
         // 서버에서 방 참가 성공 시 처리
         socket.on('roomJoined', ({ roomId, isHost }) => {
-            if (isHost) {
-                // 호스트일 경우 Game 페이지로 이동
-                navigate(`/game/${roomId}`, { state: { nickname, roomId } });
-            } else {
-                // 비호스트일 경우 GamePlay 페이지로 바로 이동
-                navigate(`/game/${roomId}/gameplay`, { state: { nickname, roomId } });
-            }
+            // if (isHost) {
+            //     // 호스트일 경우 Game 페이지로 이동
+            //     navigate(`/game/${roomId}`, { state: { nickname, roomId } });
+            // } else {
+            //     // 비호스트일 경우 GamePlay 페이지로 바로 이동
+            //     navigate(`/game/${roomId}/gameplay`, { state: { nickname, roomId } });
+            // }
+            navigate(`/game/${roomId}/gameplay`, { state: { nickname, roomId } });
         });
     
         // 방 참가 실패 시 처리

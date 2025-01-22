@@ -31,7 +31,9 @@ const GamePlay: React.FC = () => {
             { nickname: string; totalScore: number }[]
         >([]);
         const [host, setHost] = useState<string>("");
-
+    const [isGameEnded, setIsGameEnded] = useState<boolean>(false); // 게임 종료 여부
+    const [hasStartedGame, setHasStartedGame] = useState<boolean>(false); // 게임 시작 버튼이 처음에만 뜨게 하기 위한 상태
+    const [isHostNotified, setIsHostNotified] = useState(false);
 
 
     // useEffect(() => {
@@ -71,10 +73,27 @@ const GamePlay: React.FC = () => {
     //     }
     // }, [description, keyword, isDevMode]);
     
+    
+
     //채팅 상태관리
     useEffect(() => {
         if (roomId) {
             console.log(`방 ${roomId}에 입장한 상태입니다.`);
+            console.log(isHost);
+            // 서버에서 방 참가 성공 시 처리
+            socket.emit("getRoomState");
+            socket.on('roomJoined', ({ roomId, isHost }) => {
+                // if (isHost) {
+                //     // 호스트일 경우 Game 페이지로 이동
+                //     navigate(`/game/${roomId}`, { state: { nickname, roomId } });
+                // } else {
+                //     // 비호스트일 경우 GamePlay 페이지로 바로 이동
+                //     navigate(`/game/${roomId}/gameplay`, { state: { nickname, roomId } });
+                // }
+                
+                console.log(isHost);
+                setIsHost(isHost);
+            });
 
             socket.on('gameStarted', ({ imageUrl, category }) => {
                 setImageUrl(imageUrl|| placeholderImage); // 이미지 URL 상태 업데이트
@@ -82,6 +101,8 @@ const GamePlay: React.FC = () => {
                 setTimer(30); // 수정1
                 console.log(`게임 시작: 그림 URL (${imageUrl}), 카테고리 (${category}) 수신`);
             });
+
+            
     
             // 채팅 메시지 수신
             socket.on('chatMessage', (data) => {
@@ -119,6 +140,7 @@ const GamePlay: React.FC = () => {
         
                 setMessages((prev) => [...prev, `[알림]: 게임이 종료되었습니다`]); // 시스템 메시지 추가
                 setScores(scores); // 점수 업데이트
+                setIsGameEnded(true); // 게임 종료 상태 설정
                 
         
                 // 현재 사용자가 다음 호스트인지 판단
@@ -138,7 +160,7 @@ const GamePlay: React.FC = () => {
             socket.on("hostTransition", ({ roomId, message }) => {
                 console.log(roomId);
                 alert(message);
-                navigate(`/game/${roomId}`); // Game 화면으로 이동
+                setIsHost(true);
             });
         
             return () => {
@@ -197,6 +219,20 @@ const GamePlay: React.FC = () => {
         };
     }, []);
 
+    // 호스트 확인
+    useEffect(() => {
+        socket.on("hostInitialized", ({ message }) => {
+            setIsHostNotified(true); // 호스트 상태 업데이트
+        });
+        console.log(isHostNotified);
+    
+        return () => {
+            socket.off("hostInitialized");
+        };
+    }, []);
+
+    
+
     //방 나가기
     const handleLeaveRoom = () => {
         if (roomId) {
@@ -207,6 +243,21 @@ const GamePlay: React.FC = () => {
             navigate("/"); // 원하는 경로로 설정
         }
     };
+
+    //게임 처음 시작 버튼
+    const handleStartGame = () => {
+            socket.emit("startGame", { room: roomId });
+            setHasStartedGame(true); // 버튼을 숨기기 위해 설정
+            navigate(`/game/${roomId}`); // Game 페이지로 이동
+        };
+    
+
+    //게임 시작 & 재시작 버튼
+    const handleRestartGame = () => {
+        setIsGameEnded(false); // 게임 종료 상태 초기화
+        navigate(`/game/${roomId}`); // Game 페이지로 이동
+    };
+    
 
     
     //채팅 입력
@@ -231,6 +282,21 @@ const GamePlay: React.FC = () => {
                     <button onClick={handleLeaveRoom} className="leave-room-button">
                     방 나가기
                     </button>
+                    {isHostNotified && (
+                        <div className="game-restart">
+                            <button onClick={handleStartGame} className="restart-button">
+                                게임 시작
+                            </button>
+                        </div>
+                    )}
+                    {isGameEnded && isHost && (
+                        <div className="game-restart">
+                            <h3>게임이 종료되었습니다.</h3>
+                            <button onClick={handleRestartGame} className="restart-button">
+                                게임 재시작
+                            </button>
+                        </div>
+                    )}
                 </header>
                 <main className="main-container">
                 <div className="participants-list">
