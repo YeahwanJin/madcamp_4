@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png'; // 로고 추가
 import axios from 'axios';
 import placeholderImage from '../assets/placeholder.png'; // 임의의 이미지 추가
 import '../styles/GamePlay.css';
 import socket from '../socket'; // 분리된 Socket.IO 클라이언트
 
+
 const GamePlay: React.FC = () => {
     const { roomId } = useParams(); // URL에서 roomId 가져오기
     const location = useLocation();
     const state = location.state as { description: string; keyword: string };
-    
-
+    const [scores, setScores] = useState<{ nickname: string; earnedScore: number; totalScore: number }[]>([]);
+    const [isHost, setIsHost] = useState<boolean>(false); // 호스트 여부 상태
+    const [gameStatus, setGameStatus] = useState<string>(''); // 게임 상태 메시지
+    const navigate = useNavigate();
     // const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [nickname, setNickname] = useState<string>(''); // 닉네임 상태 추가
     const [category, setCategory] = useState<string | null>(null); // 카테고리 상태 추가
     const [error, setError] = useState<string | null>(null);
     const [messages, setMessages] = useState<string[]>([]); // 채팅 메시지 목록
@@ -20,6 +24,9 @@ const GamePlay: React.FC = () => {
     const isDevMode = false; // true로 설정하면 실제 API 호출을 막음
     const { script } = location.state || {}; // 초기 상태에서 category와 script 받기
     const [imageUrl, setImageUrl] = useState<string | null>(null);
+    
+
+
 
     // useEffect(() => {
     //     if (description) {
@@ -87,6 +94,51 @@ const GamePlay: React.FC = () => {
         }
     }, [roomId]);
 
+    useEffect(() => {
+
+        // 방 참가 시 서버에서 닉네임 수신
+            // socket.on('roomJoined', ({ nickname, isHost }) => {
+            //     setNickname(nickname);
+            //     setIsHost(isHost);
+            //     console.log(`닉네임: ${nickname}, 호스트 여부: ${isHost}`);
+            // });
+            // 게임 종료 이벤트 처리
+            socket.on('gameEnded', ({ message, scores, nextHost }) => {
+                console.log('게임 종료 이벤트 수신:');
+                console.log('메시지:', message);
+                console.log('점수:', scores);
+                console.log('다음 호스트 ID:', nextHost);
+        
+                alert(message); // 게임 종료 메시지
+                setScores(scores); // 점수 업데이트
+                
+        
+                // 현재 사용자가 다음 호스트인지 판단
+                // if (nickname === nextHost) {
+                //     console.log('호스트 ID:', nickname);
+                //     console.log('현재 사용자가 다음 호스트입니다.');
+                //     setIsHost(true); // 호스트 상태 업데이트
+                //     navigate(`/game/${roomId}`); // 호스트는 Game 화면으로 이동
+                // } else {
+                //     console.log('게스트 ID:', nickname);
+                //     console.log('현재 사용자는 호스트가 아닙니다.');
+                //     setIsHost(false); // 비호스트 상태 유지
+                //     setGameStatus('게임이 종료되었습니다. 호스트가 새로운 라운드를 준비 중입니다.');
+                // }
+
+                socket.on("hostTransition", ({ roomId, message }) => {
+                    alert(message);
+                    navigate(`/game/${roomId}`); // Game 화면으로 이동
+                });
+            });
+        
+            return () => {
+                console.log('게임 종료 이벤트 리스너 제거');
+                socket.off('gameEnded');
+                socket.off("hostTransition");
+            };
+        }, []);
+
 
     const sendMessage = () => {
         if (newMessage.trim() !== '' && roomId) {
@@ -143,6 +195,19 @@ const GamePlay: React.FC = () => {
                     </div>
                 </main>
             </div>
+            <h1>게임 플레이</h1>
+            {isHost ? (
+                <p>새로운 라운드를 준비하세요.</p>
+            ) : (
+                <p>{gameStatus}</p>
+            )}
+
+            <h3>점수</h3>
+            {scores.map((score, index) => (
+                <p key={index}>
+                    {score.nickname}: 이번 라운드 {score.earnedScore}점, 총점 {score.totalScore}점
+                </p>
+            ))}
         </div>
     );
 };

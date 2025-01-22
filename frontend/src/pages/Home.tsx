@@ -8,6 +8,11 @@ import defaultPhoto3 from '../assets/defaultPhoto3.jpg';
 import wrenchIcon from '../assets/wrench.png'; // 몽키스패너 아이콘
 import playIcon from '../assets/play-icon.webp'; // 플레이 아이콘 추가
 import socket from '../socket'; // 분리된 Socket.IO 클라이언트
+import '../styles/fonts.css';
+import character1 from '../assets/character1.png'
+import character2 from '../assets/character2.png'
+import character3 from '../assets/character3.png'
+import character4 from '../assets/character4.png'
 
 const Home: React.FC = () => {
     const navigate = useNavigate();
@@ -133,10 +138,10 @@ const Home: React.FC = () => {
                             ) : (
                                 <div className="placeholder-circle"></div>
                             )}
-                        </div>
-                        <button className="wrench-button" onClick={togglePicker}>
+                            <button className="wrench-button" onClick={togglePicker}>
                             <img src={wrenchIcon} alt="설정 아이콘" className="wrench-icon" />
                         </button>
+                        </div>
                     </div>
                     {isPickerOpen && (
                         <div className="photo-picker">
@@ -202,6 +207,15 @@ const Home: React.FC = () => {
                             ))}
                         </div>
                     </div>
+            </div>
+            
+        </div>
+        <div className="intro-container">
+            <div className="character-container">
+                <img src={character1} alt="character character-1" className="character character-1" />
+                <img src={character2} alt="character character-2" className="character character-2" />
+                <img src={character3} alt="character character-3" className="character character-3" />
+                <img src={character4} alt="character character-4" className="character character-4" />
             </div>
         </div>
         </div>
