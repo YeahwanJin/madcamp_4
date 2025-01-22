@@ -121,7 +121,7 @@ const Home: React.FC = () => {
 
     return (
         <div className="home">
-            <div className="outer-container">
+            <div className="outer-container-Home">
             <header className="header">
                 <img src={logo} alt="1박 2일 로고" className="logo" />
                 <h2 className="sub-title">AI로 말해요</h2>

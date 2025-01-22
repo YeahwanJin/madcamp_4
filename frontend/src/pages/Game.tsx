@@ -34,6 +34,7 @@ const Game: React.FC = () => {
             };
         }, []);
 
+    //게임 시작버튼    
     const handleStartGame = () => {
             if (selectedCategory) {
                 socket.emit('startGame', { room: roomId, category: selectedCategory });
@@ -43,6 +44,16 @@ const Game: React.FC = () => {
             }
         };
 
+    //방 나가기 버튼
+    const handleLeaveRoom = () => {
+        if (roomId) {
+            // 서버로 leaveRoom 이벤트 전송
+            socket.emit("leaveRoom", { room: roomId });
+    
+            // 로비나 메인 화면으로 이동
+            navigate("/"); // 원하는 경로로 설정
+        }
+    };    
 
 
     return (
@@ -52,6 +63,9 @@ const Game: React.FC = () => {
                 <img src={logo} alt="로고" className="logo" />
                 <h2 className="subtitle">AI로 말해요</h2>
                 <h3 className="h-game3">방 ID: {roomId}</h3> {/* 방 ID 표시 */}
+                <button onClick={handleLeaveRoom} className="leave-room-button">
+                    방 나가기
+                </button>
             </header>
             <div className="content">
                 {/* 왼쪽: 유저 리스트 */}

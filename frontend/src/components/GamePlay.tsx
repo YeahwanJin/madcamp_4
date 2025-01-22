@@ -5,6 +5,7 @@ import axios from 'axios';
 import placeholderImage from '../assets/placeholder.png'; // 임의의 이미지 추가
 import '../styles/GamePlay.css';
 import socket from '../socket'; // 분리된 Socket.IO 클라이언트
+import Timer from '../components/Timer'; // Timer 컴포넌트 임포트
 
 
 const GamePlay: React.FC = () => {
@@ -24,7 +25,12 @@ const GamePlay: React.FC = () => {
     const isDevMode = false; // true로 설정하면 실제 API 호출을 막음
     const { script } = location.state || {}; // 초기 상태에서 category와 script 받기
     const [imageUrl, setImageUrl] = useState<string | null>(null);
-    
+    const [isGameRunning, setIsGameRunning] = useState(false);
+    const [timer, setTimer] = useState<number>(30); // 타이머 상태 추가
+    const [participants, setParticipants] = useState<
+            { nickname: string; totalScore: number }[]
+        >([]);
+        const [host, setHost] = useState<string>("");
 
 
 
@@ -71,8 +77,9 @@ const GamePlay: React.FC = () => {
             console.log(`방 ${roomId}에 입장한 상태입니다.`);
 
             socket.on('gameStarted', ({ imageUrl, category }) => {
-                setImageUrl(imageUrl); // 이미지 URL 상태 업데이트
-                setCategory(category); // 카테고리 상태 업데이트
+                setImageUrl(imageUrl|| placeholderImage); // 이미지 URL 상태 업데이트
+                setCategory(category|| '??'); // 카테고리 상태 업데이트
+                setTimer(30); // 수정1
                 console.log(`게임 시작: 그림 URL (${imageUrl}), 카테고리 (${category}) 수신`);
             });
     
@@ -94,6 +101,7 @@ const GamePlay: React.FC = () => {
         }
     }, [roomId]);
 
+    //게임종료
     useEffect(() => {
 
         // 방 참가 시 서버에서 닉네임 수신
@@ -109,7 +117,7 @@ const GamePlay: React.FC = () => {
                 console.log('점수:', scores);
                 console.log('다음 호스트 ID:', nextHost);
         
-                alert(message); // 게임 종료 메시지
+                setMessages((prev) => [...prev, `[알림]: 게임이 종료되었습니다`]); // 시스템 메시지 추가
                 setScores(scores); // 점수 업데이트
                 
         
@@ -125,11 +133,12 @@ const GamePlay: React.FC = () => {
                 //     setIsHost(false); // 비호스트 상태 유지
                 //     setGameStatus('게임이 종료되었습니다. 호스트가 새로운 라운드를 준비 중입니다.');
                 // }
+            });
 
-                socket.on("hostTransition", ({ roomId, message }) => {
-                    alert(message);
-                    navigate(`/game/${roomId}`); // Game 화면으로 이동
-                });
+            socket.on("hostTransition", ({ roomId, message }) => {
+                console.log(roomId);
+                alert(message);
+                navigate(`/game/${roomId}`); // Game 화면으로 이동
             });
         
             return () => {
@@ -139,12 +148,74 @@ const GamePlay: React.FC = () => {
             };
         }, []);
 
+    // 타이머 업데이트 이벤트 리스너
+    useEffect(() => {
+        const handleTimerUpdate = ({ remainingTime }: { remainingTime: number }) => {
+            setTimer(remainingTime);
+            console.log(remainingTime);
+        };
+        
 
+        socket.on('timerUpdate', handleTimerUpdate);
+
+        return () => {
+            socket.off('timerUpdate', handleTimerUpdate);
+        };
+    }, []);
+
+    // 타이머 종료 핸들러
+    // const handleTimerEnd = () => {
+    //     console.log('타이머가 종료되었습니다.');
+    //     setIsGameRunning(false);
+    //     setTimer(0);
+    // };
+
+    //호스트 채팅 제한
+    useEffect(() => {
+        socket.on("chatError", (data) => {
+            alert(data.message); // 알림 표시
+        });
+    
+        return () => {
+            socket.off("chatError");
+        };
+    }, []);
+
+    // 참가자 목록 및 점수 업데이트 이벤트
+    useEffect(() => {
+
+        // 참가자 목록 요청
+        socket.emit("getParticipants", roomId);
+
+        socket.on("participantsUpdated", ({ participants, host }) => {
+            setParticipants(participants); // 참가자와 점수 상태 업데이트
+            setHost(host); // 호스트 정보 업데이트
+        });
+
+        return () => {
+            socket.off("participantsUpdated");
+        };
+    }, []);
+
+    //방 나가기
+    const handleLeaveRoom = () => {
+        if (roomId) {
+            // 서버로 leaveRoom 이벤트 전송
+            socket.emit("leaveRoom", { room: roomId });
+    
+            // 로비나 메인 화면으로 이동
+            navigate("/"); // 원하는 경로로 설정
+        }
+    };
+
+    
+    //채팅 입력
     const sendMessage = () => {
         if (newMessage.trim() !== '' && roomId) {
             // 서버로 메시지 전송
             socket.emit('chatMessage', { room: roomId, message: newMessage });
             console.log(`채팅 입력 성공: ${roomId}`);
+            setTimer(0); // 타이머를 0으로 설정
             setNewMessage(''); // 입력창 초기화
         }
     };
@@ -153,14 +224,33 @@ const GamePlay: React.FC = () => {
         <div className="game-play">
             <div className="outer-container">
                 <header>
-                    <img src={logo} alt="로고" className="logo" />
+                    <img src={logo||placeholderImage} alt="로고" className="logo" />
                     <h2 className="subtitle">AI로 말해요</h2>
                     <h6>방 ID: {roomId}</h6> {/* 방 ID 표시 */}
+                    <Timer initialTime={timer} isRunning={isGameRunning} />
+                    <button onClick={handleLeaveRoom} className="leave-room-button">
+                    방 나가기
+                    </button>
                 </header>
                 <main className="main-container">
+                <div className="participants-list">
+                    <h3>참가자 목록</h3>
+                    {participants
+                        .sort((a, b) => b.totalScore - a.totalScore) // 점수 내림차순 정렬
+                        .map((participant, index) => (
+                            <div key={index} className="participant-item">
+                                <p>
+                                    {index + 1}. {participant.nickname}{" "}
+                                    {participant.nickname === host && "(호스트)"}
+                                </p>
+                                <p>점수: {participant.totalScore}점</p>
+                            </div>
+                        ))}
+                </div>
+
                     <div className="image-container">
                         <h1>게임 플레이</h1>
-                        <p>카테고리: {category}</p>
+                        <p>카테고리: {category || '??'}</p>
                         <p>{script}</p>
                         {error ? (
                             <div className="error-message">
@@ -195,19 +285,19 @@ const GamePlay: React.FC = () => {
                     </div>
                 </main>
             </div>
-            <h1>게임 플레이</h1>
+            {/* <h1>게임 플레이</h1> */}
             {isHost ? (
                 <p>새로운 라운드를 준비하세요.</p>
             ) : (
                 <p>{gameStatus}</p>
             )}
 
-            <h3>점수</h3>
+            {/* <h3>점수</h3>
             {scores.map((score, index) => (
                 <p key={index}>
                     {score.nickname}: 이번 라운드 {score.earnedScore}점, 총점 {score.totalScore}점
                 </p>
-            ))}
+            ))} */}
         </div>
     );
 };
