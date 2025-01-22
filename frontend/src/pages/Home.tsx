@@ -13,6 +13,7 @@ import character1 from '../assets/character1.png'
 import character2 from '../assets/character2.png'
 import character3 from '../assets/character3.png'
 import character4 from '../assets/character4.png'
+import GameList from '../components/GameList'; // Import your GameList component
 
 const Home: React.FC = () => {
     const navigate = useNavigate();
@@ -24,6 +25,12 @@ const Home: React.FC = () => {
     const [roomId, setRoomId] = useState<string | null>(null);
     const [isJoinRoomOpen, setJoinRoomOpen] = useState(false);
     const [joinRoomId, setJoinRoomId] = useState<string>('');
+    const [activeTab, setActiveTab] = useState<'instructions' | 'gameList'>('instructions'); // Add tab state
+    
+    const tabs = [
+        { key: 'instructions', label: '플레이 방법' },
+        { key: 'gameList', label: '게임 목록' },
+    ];
 
     const photos = [defaultPhoto1, defaultPhoto2, defaultPhoto3];
     const texts = [
@@ -63,6 +70,16 @@ const Home: React.FC = () => {
         };
     }, []); // 빈 배열 -> 마운트/언마운트 시에만 실행
 
+    //닉네임, 방 중복 에러
+    useEffect(() => {
+        socket.on("error", (data) => {
+            alert(data.message); // 알림 표시
+        });
+    
+        return () => {
+            socket.off("error");
+        };
+    }, []);
     
 
     // const handleJoinRoom = () => {
@@ -115,15 +132,15 @@ const Home: React.FC = () => {
         });
     
         // 방 참가 실패 시 처리
-        socket.on('error', (errorMessage) => {
-            alert(errorMessage);
-        });
+        // socket.on('error', (errorMessage) => {
+        //     alert(errorMessage);
+        // });
     };
 
     return (
         <div className="home">
             <div className="outer-container-Home">
-            <header className="header">
+            <header className="home-header">
                 <img src={logo} alt="1박 2일 로고" className="logo" />
                 <h2 className="sub-title">AI로 말해요</h2>
             </header>
@@ -190,24 +207,46 @@ const Home: React.FC = () => {
                 </div>
                 {/* 오른쪽 박스 */}
                 <div className="right-box">
-                        <h3>플레이 방법</h3>
-                        <div className="text-box">
-                            <p>{texts[currentIndex]}</p>
-                        </div>
-                        <div className="dots">
-                            {texts.map((_, index) => (
-                                <div
-                                    key={index}
-                                    className={`dot ${index === currentIndex ? 'active' : ''}`}
-                                    style={{
-                                        background: index === currentIndex
-                                            ? `conic-gradient(#a7a6a6 ${timerProgress}%, #e0e0e0 ${timerProgress}%)`
-                                            : '#e0e0e0',
-                                    }}
-                                ></div>
-                            ))}
-                        </div>
+                    {/* 탭 헤드 */}
+                    <div className="tabs-header">
+                        {tabs.map((tab) => (
+                            <button
+                                key={tab.key}
+                                className={`tab-header ${activeTab === tab.key ? 'active' : ''}`}
+                                onClick={() => setActiveTab(tab.key as 'instructions' | 'gameList')}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
                     </div>
+    
+                    {/* 탭 내용 */}
+                    <div className="tabs-content">
+                    {activeTab === 'instructions' && (
+                        <div>
+                            <h3>플레이 방법</h3>
+                            <div className="text-box">
+                                <p>{texts[currentIndex]}</p>
+                            </div>
+                            <div className="dots">
+                                {texts.map((_, index) => (
+                                    <div
+                                        key={index}
+                                        className={`dot ${index === currentIndex ? 'active' : ''}`}
+                                        style={{
+                                            background:
+                                                index === currentIndex
+                                                    ? `conic-gradient(#a7a6a6 ${timerProgress}%, #e0e0e0 ${timerProgress}%)`
+                                                    : '#e0e0e0',
+                                        }}
+                                    ></div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                        {activeTab === 'gameList' && <GameList />}
+                    </div>
+                </div>
             </div>
             
         </div>

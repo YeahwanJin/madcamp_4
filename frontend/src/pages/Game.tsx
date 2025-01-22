@@ -38,6 +38,7 @@ const Game: React.FC = () => {
     const handleStartGame = () => {
             if (selectedCategory) {
                 socket.emit('startGame', { room: roomId, category: selectedCategory });
+                console.log('selectedcagegory: ',selectedCategory);
                 navigate(`/game/${roomId}/game-start`, { state: { selectedCategory } });
             } else {
                 alert('카테고리를 선택하세요!');
@@ -58,14 +59,15 @@ const Game: React.FC = () => {
 
     return (
         <div className="game">
-            <div className="outer-container">
+            <button onClick={handleLeaveRoom} className="leave-room-button">
+                    방 나가기
+                </button>
+            <div className="outer-container-Game">
             <header className="game-header">
                 <img src={logo} alt="로고" className="logo" />
                 <h2 className="subtitle">AI로 말해요</h2>
                 <h3 className="h-game3">방 ID: {roomId}</h3> {/* 방 ID 표시 */}
-                <button onClick={handleLeaveRoom} className="leave-room-button">
-                    방 나가기
-                </button>
+                
             </header>
             <div className="content">
                 {/* 왼쪽: 유저 리스트 */}

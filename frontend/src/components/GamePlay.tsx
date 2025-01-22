@@ -139,7 +139,11 @@ const GamePlay: React.FC = () => {
                 console.log('다음 호스트 ID:', nextHost);
         
                 setMessages((prev) => [...prev, `[알림]: 게임이 종료되었습니다`]); // 시스템 메시지 추가
-                setScores(scores); // 점수 업데이트
+                // 점수가 있을 경우만 업데이트
+                if (scores) {
+                    console.log("점수:", scores);
+                    setScores(scores);
+        }
                 setIsGameEnded(true); // 게임 종료 상태 설정
                 
         
@@ -246,7 +250,7 @@ const GamePlay: React.FC = () => {
 
     //게임 처음 시작 버튼
     const handleStartGame = () => {
-            socket.emit("startGame", { room: roomId });
+            // socket.emit("startGame", { room: roomId });
             setHasStartedGame(true); // 버튼을 숨기기 위해 설정
             navigate(`/game/${roomId}`); // Game 페이지로 이동
         };
@@ -273,11 +277,10 @@ const GamePlay: React.FC = () => {
 
     return (
         <div className="game-play">
-            <div className="outer-container">
+            <div className="outer-container-GamePlay">
                 <header>
                     <img src={logo||placeholderImage} alt="로고" className="logo" />
                     <h2 className="subtitle">AI로 말해요</h2>
-                    <h6>방 ID: {roomId}</h6> {/* 방 ID 표시 */}
                     <Timer initialTime={timer} isRunning={isGameRunning} />
                     <button onClick={handleLeaveRoom} className="leave-room-button">
                     방 나가기
@@ -331,7 +334,6 @@ const GamePlay: React.FC = () => {
                         )}
                     </div>
                     <div className="chat-container">
-                        <h3>채팅</h3>
                         <div className="chat-messages">
                             {messages.map((msg, index) => (
                                 <div key={index} className="chat-message">

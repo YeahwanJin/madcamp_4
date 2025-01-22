@@ -8,9 +8,21 @@
     justify-content: flex-start;
     min-height: 100vh;
     width: 100vw;
-    background-color: #f9f9f9;
+    background: url('../assets/background.webp') no-repeat center center fixed;
+    background-size: cover;
     font-family: Arial, sans-serif;
     padding: 20px;
+}
+
+.outer-container-GamePlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+    background-color: transparent; /* 배경색 투명 */
 }
 
 /* 헤더 스타일 */
@@ -20,7 +32,8 @@ header {
     align-items: center;
     width: 100%;
     max-width: 1200px;
-    margin-bottom: 20px;
+    max-height: 100px;
+    margin-bottom: 0px;
     padding: 10px 20px;
     background-color: #ffffff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -79,15 +92,46 @@ header .subtitle {
     margin-left: 20px;
 }
 
+/*메인 항목들*/
 .main-container {
+    width: 100%; /* 메인 컨테이너 너비 최대로 조정 */
+    max-width: 1200px;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
 }
 
+/*참가자*/
+.participants-list {
+    width: 100%;
+    min-height: 300px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    margin-left: 20px; /* 이미지 컨테이너와의 간격 조정 */
+    border: 2px solid #000000; /* 내부 테두리 */
+    background-color: white;
+}
+
+.participants-list li {
+    padding: 10px;
+    background-color: #ffffff;
+}
+
+.participants-list li:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+/*이미지*/
 .image-container {
     flex: 3;
-    margin-right: 20px;
+    padding: 10px;
+    min-width: 600px;
+    min-height: 400px;
+    background-color: #ffffff;
+    border: 2px solid #000000; /* 내부 테두리 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    
 }
 
 .chat-container {
@@ -96,6 +140,7 @@ header .subtitle {
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 10px;
+    border: 2px solid #000000; /* 내부 테두리 */
 }
 
 .chat-messages {
@@ -137,3 +182,6 @@ header .subtitle {
 .chat-input button:hover {
     background-color: #0056b3;
 }
+
+/*전체 위치 수정*/
+

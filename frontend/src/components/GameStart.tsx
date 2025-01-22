@@ -5,6 +5,7 @@ import '../styles/GameStart.css';
 import logo from '../assets/logo.png';
 import playIcon from '../assets/play-icon.webp'; // 플레이 아이콘 추가
 import socket from '../socket';
+import Timer from '../components/Timer'; // Timer 컴포넌트 임포트
 
 const GameStart: React.FC = () => {
     const { roomId } = useParams(); // URL에서 roomId 가져오기
@@ -18,7 +19,9 @@ const GameStart: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [script, setScript] = useState<string>('');
     const [keyword, setKeyword] = useState<string | null>(null); // 정답 단어 상태
-    
+    const [timer, setTimer] = useState<number>(0);
+    const isGameRunning = true;
+
     // useEffect(() => {
     //     // 카테고리가 존재하면 백엔드 API 호출
     //     if (category) {
@@ -48,10 +51,27 @@ const GameStart: React.FC = () => {
             socket.on("error", (error) => {
                 alert(error.message || "오류가 발생했습니다.");
             });
+
+            socket.on('timerUpdate', ({ remainingTime }) => {
+                        setTimer(remainingTime);
+                        console.log(remainingTime);
+                    });
     
             return () => {
                 socket.off("hostPrepare"); // 이벤트 정리
+                socket.off('timerUpdate');
                 socket.off("error");
+            };
+        }, []);
+
+        useEffect(() => {
+            socket.on("gameStartReady", ({ message, nickname }) => {
+                alert(message); // 시간 초과 메시지 표시
+                // navigate(`/game/${roomId}/gameplay`, { state: { nickname, roomId } });
+            });
+        
+            return () => {
+                socket.off("gameStartReady");
             };
         }, []);
 
@@ -86,12 +106,13 @@ const GameStart: React.FC = () => {
 
     return (
         <div className="game-start">
-            <div className="outer-container">
+            <div className="outer-container-GameStart">
             <header>
                     <img src={logo} alt="로고" className="logo" />
                     
                 </header>
             <h2>제시어: {keyword || "제시어를 불러오는 중..."}</h2>
+            <Timer initialTime={timer} isRunning={isGameRunning} />
             {error ? (
                 <div className="error-message">
                     <p>{error}</p>
