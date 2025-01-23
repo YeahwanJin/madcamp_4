@@ -13,6 +13,8 @@ import actorIcon from '../assets/actorIcon.png'; // 배우 아이콘
 import celebIcon from '../assets/celebIcon.png'; // 유명인 아이콘
 import playIcon from '../assets/play-icon.webp'; // 플레이 아이콘 추가
 import socket from '../socket';
+import { motion } from 'framer-motion';
+import exitIcon from '../assets/logout.png';
 
 const Game: React.FC = () => {
     const navigate = useNavigate();
@@ -56,17 +58,37 @@ const Game: React.FC = () => {
         }
     };    
 
+    //transition
+    const pageTransition = {
+        initial: {
+            opacity: 0
+        },
+        animate: {
+            opacity: 1,
+            transition: { duration: 0.5 }
+        },
+        exit: {
+            opacity: 0,
+            transition: { duration: 0.5 }
+        }
+    };
+
 
     return (
+        <motion.div
+            className="game"
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={pageTransition}
+        >
         <div className="game">
-            <button onClick={handleLeaveRoom} className="leave-room-button">
-                    방 나가기
-                </button>
             <div className="outer-container-Game">
             <header className="game-header">
                 <img src={logo} alt="로고" className="logo" />
-                <h2 className="subtitle">AI로 말해요</h2>
-                <h3 className="h-game3">방 ID: {roomId}</h3> {/* 방 ID 표시 */}
+                <button onClick={handleLeaveRoom} className="leave-room-button" style={{ border: 'none', background: 'none' }}>
+                    <img src={exitIcon} alt="방 나가기" />
+                </button>
                 
             </header>
             <div className="content">
@@ -149,6 +171,7 @@ const Game: React.FC = () => {
             </div>
         </div>
         </div>
+        </motion.div>
     );
 };
 

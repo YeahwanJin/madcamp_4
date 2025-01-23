@@ -14,6 +14,7 @@ import character2 from '../assets/character2.png'
 import character3 from '../assets/character3.png'
 import character4 from '../assets/character4.png'
 import GameList from '../components/GameList'; // Import your GameList component
+import monitor from '../assets/monitor.png'
 
 const Home: React.FC = () => {
     const navigate = useNavigate();
@@ -141,7 +142,8 @@ const Home: React.FC = () => {
         <div className="home">
             <div className="outer-container-Home">
             <header className="home-header">
-                <img src={logo} alt="1박 2일 로고" className="logo" />
+            
+                <img src={logo} alt="1박 2일 로고" className="logo1" />
                 <h2 className="sub-title">AI로 말해요</h2>
             </header>
             <></>

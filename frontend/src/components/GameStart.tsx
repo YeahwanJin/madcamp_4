@@ -52,14 +52,14 @@ const GameStart: React.FC = () => {
                 alert(error.message || "오류가 발생했습니다.");
             });
 
-            socket.on('timerUpdate', ({ remainingTime }) => {
+            socket.on('timerUpdate2', ({ remainingTime }) => {
                         setTimer(remainingTime);
                         console.log(remainingTime);
                     });
     
             return () => {
                 socket.off("hostPrepare"); // 이벤트 정리
-                socket.off('timerUpdate');
+                socket.off('timerUpdate2');
                 socket.off("error");
             };
         }, []);

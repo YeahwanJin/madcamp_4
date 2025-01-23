@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import timer from '../assets/timerImage.png';
+import timerIcon from '../assets/timerImage.png'; // 파일명과 변수명이 일치하도록 조정
 import '../styles/timer.css';
 
 interface TimerProps {
     initialTime: number; // 타이머 초기 시간 (초 단위)
     isRunning: boolean; // 타이머가 실행 중인지 여부
+    className?: string; // 추가된 클래스명을 위한 옵셔널 prop
 }
 
-const Timer: React.FC<TimerProps> = ({ initialTime, isRunning }) => {
+const Timer: React.FC<TimerProps> = ({ initialTime, isRunning, className = '' }) => {
     const [timeRemaining, setTimeRemaining] = useState<number>(initialTime);
 
     useEffect(() => {
@@ -16,7 +17,7 @@ const Timer: React.FC<TimerProps> = ({ initialTime, isRunning }) => {
         if (isRunning && timeRemaining > 0) {
             // 타이머 실행
             timer = setInterval(() => {
-                setTimeRemaining((prev) => prev - 1);
+                setTimeRemaining(prev => prev - 1);
             }, 1000);
         }
 
@@ -31,8 +32,8 @@ const Timer: React.FC<TimerProps> = ({ initialTime, isRunning }) => {
     }, [initialTime]);
 
     return (
-        <div className="timer">
-            <img src={timer} alt="timer" className="timer-icon" />
+        <div className={`timer ${className}`}> {/* 수정된 부분 */}
+            <img src={timerIcon} alt="timer" className="timer-icon" />
             <span className="timer-display">
                 {Math.floor(timeRemaining / 60)
                     .toString()

@@ -9,8 +9,8 @@
 }
 
 .timer-icon {
-    width: 80px; /* 시계 이미지 크기 조정 */
-    height: 80px;
+    width: 70px; /* 시계 이미지 크기 조정 */
+    height: 70px;
     object-fit: contain;
     animation: pulse 1.5s infinite; /* 약간의 확대 효과 */
     opacity: 0.9; /* 약간 투명도 */
@@ -29,9 +29,16 @@
 /* 애니메이션 효과 */
 @keyframes pulse {
     0%, 100% {
-        transform: scale(1);
+      transform: scale(1); /* 원래 크기 */
+      color: red;
     }
     50% {
-        transform: scale(1.05);
+      transform: scale(1.1); /* 10% 더 커짐 */
+      color: red;
     }
-}
+  }
+  
+  .timer-critical {
+    animation: pulse 1s infinite; /* 애니메이션 이름, 지속 시간, 반복 */
+  }
+  

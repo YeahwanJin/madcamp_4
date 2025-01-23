@@ -1,5 +1,8 @@
 /* GamePlay.css */
-
+/* Google Fonts 로딩 */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;700&family=Fredoka+One&family=Bungee&family=Press+Start+2P&display=swap');
+/*배민주아*/
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@700&display=swap');
 /* 전체 배경과 레이아웃 설정 */
 .game-play {
     display: flex;
@@ -10,7 +13,7 @@
     width: 100vw;
     background: url('../assets/background.webp') no-repeat center center fixed;
     background-size: cover;
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', Arial, sans-serif; /* 원하는 폰트로 변경 가능 */
     padding: 20px;
 }
 
@@ -20,7 +23,7 @@
     align-items: center;
     width: 100%;
     gap: 5px;
-    max-width: 1300px;
+    max-width: 1500px;
     margin: auto;
     padding: 20px;
     
@@ -30,10 +33,12 @@
 /* 헤더 스타일 */
 header {
     display: flex;
+    font-family: 'Fredoka One', sans-serif;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 1200px;
+    gap: 20px;
+    max-width: 1440px;
     max-height: 70px;
     margin-bottom: 0px;
     padding: 10px 20px;
@@ -56,14 +61,32 @@ main {
 
 main h1 {
     font-size: 4rem;
-    color: #333;
+    font-family: 'Roboto', sans-serif;
+    color: #000000;
     margin-bottom: 10px;
 }
 
+
 main p {
-    font-size: 1.2rem;
-    color: #555;
+    font-family: 'BMJUA', sans-serif; /* BMJUA 폰트 적용 */
+    font-size: 1.4rem;
+    color: #000000;
     margin: 10px 0;
+    font-weight: bold;
+}
+
+.leave-room-button {
+    border: none;
+    width: 40px;
+    height: 40px;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.leave-room-button img {
+    width: 100%; /* 이미지를 버튼 크기에 맞게 조절 */
+    height: auto; /* 이미지의 높이를 자동으로 조절하여 비율 유지 */
 }
 
 /* 에러 메시지 스타일 */
@@ -87,17 +110,17 @@ main p {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* 로고 스타일 */
+/* 로고 스타일, AI로 말해요 */
 header .subtitle {
     font-size: 1rem;
-    color: #666;
+    color: #000000;
     margin-left: 20px;
 }
 
 /*메인 항목들*/
 .gameplay-main-container {
     width: 100%; /* 메인 컨테이너 너비 최대로 조정 */
-    max-width: 1260px;
+    max-width: 1650px;
     margin-right: 20px;
     display: flex;
     gap: 5px;
@@ -116,6 +139,7 @@ header .subtitle {
     border-radius: 5px;
     margin-left: 20px; /* 이미지 컨테이너와의 간격 조정 */
     background-color: white;
+    font-family: 'Bungee', sans-serif;
 }
 
 .participants-list li {

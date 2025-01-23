@@ -6,7 +6,7 @@ import placeholderImage from '../assets/placeholder.png'; // 임의의 이미지
 import '../styles/GamePlay.css';
 import socket from '../socket'; // 분리된 Socket.IO 클라이언트
 import Timer from '../components/Timer'; // Timer 컴포넌트 임포트
-import exitIcon from '../assets/exit.png';
+import exitIcon from '../assets/logout.png';
 
 
 const GamePlay: React.FC = () => {
@@ -236,6 +236,27 @@ const GamePlay: React.FC = () => {
         };
     }, []);
 
+    //효과음
+    useEffect(() => {
+        socket.on("correctSound", ({  }) => {
+            console.log('soundurl 로그: ');
+            const audio = new Audio('http://192.249.29.181:3000/public/sounds/correct.mp3');
+            audio.play();
+            
+        });
+
+        socket.on("failureSound", ({  }) => {
+            console.log('soundurl 로그: ');
+            const audio = new Audio('http://192.249.29.181:3000/public/sounds/fail.mp3');
+            audio.play();
+            
+        });
+    
+        return () => {
+            socket.off("failureSound"); // 이벤트 리스너 정리
+        };
+    }, []);
+
     
 
     //방 나가기
@@ -282,7 +303,8 @@ const GamePlay: React.FC = () => {
                 <header>
                     <img src={logo||placeholderImage} alt="로고" className="logo" />
                     <h2 className="subtitle">AI로 말해요</h2>
-                    <Timer initialTime={timer} isRunning={isGameRunning} />
+                    <h3 className="h-game4">방 ID: {roomId}</h3> {/* 방 ID 표시 */}
+                    <Timer initialTime={timer} isRunning={isGameRunning} className={timer <= 5 ? 'timer-critical' : ''} />
                     <button onClick={handleLeaveRoom} className="leave-room-button" style={{ border: 'none', background: 'none' }}>
                         <img src={exitIcon} alt="방 나가기" />
                     </button>
@@ -295,7 +317,6 @@ const GamePlay: React.FC = () => {
                     )}
                     {isGameEnded && isHost && (
                         <div className="game-restart">
-                            <h3>게임이 종료되었습니다.</h3>
                             <button onClick={handleRestartGame} className="restart-button">
                                 게임 재시작
                             </button>
@@ -304,16 +325,20 @@ const GamePlay: React.FC = () => {
                 </header>
                 <main className="gameplay-main-container">
                 <div className="participants-list">
-                    <h3>참가자 목록</h3>
                     {participants
                         .sort((a, b) => b.totalScore - a.totalScore) // 점수 내림차순 정렬
                         .map((participant, index) => (
                             <div key={index} className="participant-item">
-                                <p>
-                                    {'#'}{index + 1}. {participant.nickname}{" "}
-                                    {participant.nickname === host && "(호스트)"}
-                                </p>
-                                <p>점수: {participant.totalScore}점</p>
+                                <div className="participant-details">
+                                <span className="participant-rank">{`#${index + 1}  `}</span>
+                                <span className="participant-name">
+                                    {participant.nickname}
+                                    {participant.nickname === host && <span className="host-tag"> (호스트)</span>}
+                                </span>
+                            </div>
+                            <div className="participant-score">
+                                <span>점수:</span> <strong>{participant.totalScore}점</strong>
+                            </div>
                             </div>
                         ))}
                 </div>
@@ -360,12 +385,7 @@ const GamePlay: React.FC = () => {
                     </div>
                 </main>
             </div>
-            {/* <h1>게임 플레이</h1> */}
-            {isHost ? (
-                <p>새로운 라운드를 준비하세요.</p>
-            ) : (
-                <p>{gameStatus}</p>
-            )}
+            
 
             {/* <h3>점수</h3>
             {scores.map((score, index) => (
