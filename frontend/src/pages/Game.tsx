@@ -122,14 +122,14 @@ const Game: React.FC = () => {
                         </div>
                         <div
                             className={`mode-item ${selectedCategory === '지역' ? 'selected' : ''}`}
-                            onClick={() => handleCategorySelect('노래')}
+                            onClick={() => handleCategorySelect('지역')}
                         >
                             <img src={placeIcon} alt="지역 아이콘" className="mode-icon" />
                             지역
                         </div>
                         <div
                             className={`mode-item ${selectedCategory === '속담' ? 'selected' : ''}`}
-                            onClick={() => handleCategorySelect('속담담')}
+                            onClick={() => handleCategorySelect('속담')}
                         >
                             <img src={proverbIcon} alt="속담 아이콘" className="mode-icon" />
                             속담
@@ -143,7 +143,7 @@ const Game: React.FC = () => {
                         </div>
                         <div
                             className={`mode-item ${selectedCategory === '아이돌' ? 'selected' : ''}`}
-                            onClick={() => handleCategorySelect('아이돌돌')}
+                            onClick={() => handleCategorySelect('아이돌')}
                         >
                             <img src={idolIcon} alt="아이돌 아이콘" className="mode-icon" />
                             아이돌

@@ -144,7 +144,6 @@ const Home: React.FC = () => {
             <header className="home-header">
             
                 <img src={logo} alt="1박 2일 로고" className="logo1" />
-                <h2 className="sub-title">AI로 말해요</h2>
             </header>
             <></>
             <div className="content">
@@ -189,7 +188,7 @@ const Home: React.FC = () => {
                     <div className="button-container">
                             
                             <button className="button" onClick={() => setJoinRoomOpen(!isJoinRoomOpen)}>
-                                방 참가
+                                방 ID 입력
                             </button>
                         </div>
                         {isJoinRoomOpen && (
@@ -202,7 +201,7 @@ const Home: React.FC = () => {
                                     onChange={(e) => setJoinRoomId(e.target.value)}
                                 />
                                 <button className="button" onClick={handleJoinRoom}>
-                                    방 참가
+                                    참가
                                 </button>
                             </div>
                         )}

@@ -251,9 +251,18 @@ const GamePlay: React.FC = () => {
             audio.play();
             
         });
+
+        socket.on("photoload", ({  }) => {
+            console.log('soundurl 로그: ');
+            const audio = new Audio('http://192.249.29.181:3000/public/sounds/photoload.mp3');
+            audio.play();
+            
+        });
     
         return () => {
             socket.off("failureSound"); // 이벤트 리스너 정리
+            socket.off("photoload"); // 이벤트 리스너 정리
+            socket.off("correctSound"); // 이벤트 리스너 정리
         };
     }, []);
 
