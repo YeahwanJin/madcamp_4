@@ -15,6 +15,7 @@ import character3 from '../assets/character3.png'
 import character4 from '../assets/character4.png'
 import GameList from '../components/GameList'; // Import your GameList component
 import monitor from '../assets/monitor.png'
+import fun from '../assets/fun.png'
 
 const Home: React.FC = () => {
     const navigate = useNavigate();
@@ -249,16 +250,16 @@ const Home: React.FC = () => {
                     </div>
                 </div>
             </div>
-            
-        </div>
-        <div className="intro-container">
+            <div className="intro-container">
+        <img src={fun} alt={`fun`} className="fun" />
             <div className="character-container">
                 <img src={character1} alt="character character-1" className="character character-1" />
                 <img src={character2} alt="character character-2" className="character character-2" />
                 <img src={character3} alt="character character-3" className="character character-3" />
-                <img src={character4} alt="character character-4" className="character character-4" />
             </div>
         </div>
+        </div>
+        
         </div>
     );
 };
