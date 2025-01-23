@@ -22,7 +22,6 @@ const GameList: React.FC = () => {
 
     return (
         <div className="game-list">
-            <h1>방 목록</h1>
             {rooms.length > 0 ? (
                 <ul>
                     {rooms.map((room, index) => (

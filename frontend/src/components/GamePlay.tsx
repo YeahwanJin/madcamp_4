@@ -6,6 +6,7 @@ import placeholderImage from '../assets/placeholder.png'; // 임의의 이미지
 import '../styles/GamePlay.css';
 import socket from '../socket'; // 분리된 Socket.IO 클라이언트
 import Timer from '../components/Timer'; // Timer 컴포넌트 임포트
+import exitIcon from '../assets/exit.png';
 
 
 const GamePlay: React.FC = () => {
@@ -282,8 +283,8 @@ const GamePlay: React.FC = () => {
                     <img src={logo||placeholderImage} alt="로고" className="logo" />
                     <h2 className="subtitle">AI로 말해요</h2>
                     <Timer initialTime={timer} isRunning={isGameRunning} />
-                    <button onClick={handleLeaveRoom} className="leave-room-button">
-                    방 나가기
+                    <button onClick={handleLeaveRoom} className="leave-room-button" style={{ border: 'none', background: 'none' }}>
+                        <img src={exitIcon} alt="방 나가기" />
                     </button>
                     {isHostNotified && (
                         <div className="game-restart">
@@ -301,7 +302,7 @@ const GamePlay: React.FC = () => {
                         </div>
                     )}
                 </header>
-                <main className="main-container">
+                <main className="gameplay-main-container">
                 <div className="participants-list">
                     <h3>참가자 목록</h3>
                     {participants
@@ -309,7 +310,7 @@ const GamePlay: React.FC = () => {
                         .map((participant, index) => (
                             <div key={index} className="participant-item">
                                 <p>
-                                    {index + 1}. {participant.nickname}{" "}
+                                    {'#'}{index + 1}. {participant.nickname}{" "}
                                     {participant.nickname === host && "(호스트)"}
                                 </p>
                                 <p>점수: {participant.totalScore}점</p>
@@ -318,7 +319,7 @@ const GamePlay: React.FC = () => {
                 </div>
 
                     <div className="image-container">
-                        <h1>게임 플레이</h1>
+                        
                         <p>카테고리: {category || '??'}</p>
                         <p>{script}</p>
                         {error ? (
@@ -330,7 +331,7 @@ const GamePlay: React.FC = () => {
                                 <img src={imageUrl} alt="생성된 이미지" />
                             </div>
                         ) : (
-                            <p>이미지를 생성 중입니다...</p>
+                            <img src={ placeholderImage} alt="게임로딩 화면" />
                         )}
                     </div>
                     <div className="chat-container">
@@ -342,13 +343,19 @@ const GamePlay: React.FC = () => {
                             ))}
                         </div>
                         <div className="chat-input">
-                            <input
-                                type="text"
-                                value={newMessage}
-                                onChange={(e) => setNewMessage(e.target.value)}
-                                placeholder="메시지를 입력하세요"
-                            />
-                            <button onClick={sendMessage}>전송</button>
+                        <input
+                            type="text"
+                            value={newMessage}
+                            onChange={(e) => setNewMessage(e.target.value)}
+                            onKeyPress={(e) => {
+                                if (e.key === 'Enter' && newMessage.trim() !== '') {
+                                    sendMessage();
+                                    e.preventDefault(); // 엔터 키 입력 시 기본 이벤트(폼 제출) 방지
+                                }
+                            }}
+                            placeholder="메시지를 입력하세요"
+                        />
+                        
                         </div>
                     </div>
                 </main>
